@@ -38,6 +38,26 @@
    */
   Backbone.Mediator = {
 
+    schemas: {
+        "level-thangs-changed": {
+            "title": "level-thangs-changed",
+            "id": "",
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "description": "When a Thang changes",
+            "type":"object",
+            "properties": {
+                "thangsData": {
+                    "type":"object",
+                    "required" : {}
+                }
+            },
+            "required": ["thangsData"],
+            "additionalProperties": false
+        }
+    },
+
+    //thangsData: @thangsTreema.data
+
     /**
      * Subscribe to a channel
      *
