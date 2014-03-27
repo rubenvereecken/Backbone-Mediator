@@ -41,6 +41,8 @@
   Backbone.Mediator = {
     tv4: null,
 
+    validationEnabled: true,
+
     schemas: {},
 
     addSchemas: function(schemaObjs) {
@@ -50,10 +52,14 @@
     },
 
     /**
-     * Sets up the TV4 validator.
+     * Sets up the tv4 validator.
      */
     setUpValidator: function() {
       this.tv4 = window['tv4'].freshApi();
+    },
+
+    setValidationEnabled: function(enabled) {
+      this.validationEnabled = enabled;
     },
 
     /**
@@ -75,7 +81,7 @@
     publish: function(channel, arg) {
       if (!channels[channel]) return;
 
-      if (channel in this.schemas) {
+      if (channel in this.schemas && this.validationEnabled) {
         if (!this.tv4) this.setUpValidator();
 
         this.tv4.validate(arg, this.schemas[channel]);
@@ -86,8 +92,6 @@
           this.tv4.error = null;
           return;
         }
-      } else {
-        console.debug("Schema for " + channel + " not yet defined.");
       }
 
       var subscription;
