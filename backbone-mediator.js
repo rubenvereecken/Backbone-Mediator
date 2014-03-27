@@ -43,15 +43,27 @@
 
     validationEnabled: true,
 
-    schemas: {},
+    defSchemas: {},
 
-    addSchema: function(schemaName, schemaObj) {
-      this.schemas[schemaName] = schemaObj;
+    channelSchemas: {},
+
+    addChannelSchema: function(channel, schema) {
+      this.channelSchemas[channel] = schema;
     },
 
-    addSchemas: function(schemaObjs) {
-      for (var key in schemaObjs) {
-        this.schemas[key] = schemaObjs[key];
+    addDefSchema: function(schema) {
+      this.tv4.addSchema(schema);
+    },
+
+    addChannelSchemas: function(schemas) {
+      for (var key in schemas) {
+        this.channelSchemas[key] = schemas[key];
+      }
+    },
+
+    addDefSchemas: function(schemas) {
+      for (var key in schemas) {
+        this.tv4.addSchema(schemas[key]);
       }
     },
 
@@ -85,10 +97,10 @@
     publish: function(channel, arg) {
       if (!channels[channel]) return;
 
-      if (channel in this.schemas && this.validationEnabled) {
+      if (channel in this.channelSchemas && this.validationEnabled) {
         if (!this.tv4) this.setUpValidator();
 
-        var valid = this.tv4.validate(arg, this.schemas[channel]);
+        var valid = this.tv4.validate(arg, this.channelSchemas[channel]);
         if (!valid) {
           console.error("Dropping published object because of validation error.");
           console.error(arg);
