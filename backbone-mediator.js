@@ -39,7 +39,7 @@
    * @class
    */
   Backbone.Mediator = {
-    tv4: null,
+    tv4: window['tv4'].freshApi(),
 
     validationEnabled: true,
 
@@ -106,6 +106,11 @@
           console.error(arg);
           console.error(this.tv4.error);
           return;
+        } else if (this.tv4.missing.length) {
+          console.warn("Missing schema reference to " + this.tv4.missing[0]);
+        } else {
+          console.debug("Validation successful");
+          console.debug(arg);
         }
       }
 
