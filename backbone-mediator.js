@@ -45,6 +45,10 @@
 
     schemas: {},
 
+    addSchema: function(schemaName, schemaObj) {
+      this.schemas[schemaName] = schemaObj;
+    },
+
     addSchemas: function(schemaObjs) {
       for (var key in schemaObjs) {
         this.schemas[key] = schemaObjs[key];
@@ -84,12 +88,11 @@
       if (channel in this.schemas && this.validationEnabled) {
         if (!this.tv4) this.setUpValidator();
 
-        this.tv4.validate(arg, this.schemas[channel]);
-        if (this.tv4.error) {
+        var valid = this.tv4.validate(arg, this.schemas[channel]);
+        if (!valid) {
           console.error("Dropping published object because of validation error.");
           console.error(arg);
           console.error(this.tv4.error);
-          this.tv4.error = null;
           return;
         }
       }
