@@ -7,9 +7,11 @@
  *  <a href="https://github.com/chalbert/Backbone-Mediator">More details & documentation</a>
  *
  * @author Nicolas Gilbert
+ * @author Ruben Vereecken
  *
  * @requires _
  * @requires Backbone
+ * @requires tv4
  */
 (function(factory){
   'use strict';
@@ -27,37 +29,32 @@
    * @static
    */
   var channels = {},
-      Subscriber,
-      /** @borrows Backbone.View#delegateEvents */
+    Subscriber,
+    /** @borrows Backbone.View#delegateEvents */
       delegateEvents = Backbone.View.prototype.delegateEvents,
-      /** @borrows Backbone.View#delegateEvents */
+    /** @borrows Backbone.View#delegateEvents */
       undelegateEvents = Backbone.View.prototype.undelegateEvents;
 
   /**
    * @class
    */
   Backbone.Mediator = {
+    tv4: null,
 
-    schemas: {
-        "level-thangs-changed": {
-            "title": "level-thangs-changed",
-            "id": "",
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "description": "When a Thang changes",
-            "type":"object",
-            "properties": {
-                "thangsData": {
-                    "type":"object",
-                    "required" : {}
-                }
-            },
-            "required": ["thangsData"],
-            "additionalProperties": false
-        }
+    schemas: {},
+
+    addSchemas: function(schemaObjs) {
+      for (var key in schemaObjs) {
+        this.schemas[key] = schemaObjs[key];
+      }
     },
 
-
-    //thangsData: @thangsTreema.data
+    /**
+     * Sets up the TV4 validator.
+     */
+    setUpValidator: function() {
+      this.tv4 = window['tv4'].freshApi();
+    },
 
     /**
      * Subscribe to a channel
@@ -75,15 +72,29 @@
      * @param channel
      * @params N Extra parametter to pass to handler
      */
-    publish: function(channel) {
+    publish: function(channel, arg) {
       if (!channels[channel]) return;
 
-      var args = [].slice.call(arguments, 1),
-          subscription;
+      if (channel in this.schemas) {
+        if (!this.tv4) this.setUpValidator();
+
+        this.tv4.validate(arg, this.schemas[channel]);
+        if (this.tv4.error) {
+          console.error("Dropping published object because of validation error.");
+          console.error(arg);
+          console.error(this.tv4.error);
+          this.tv4.error = null;
+          return;
+        }
+      } else {
+        console.debug("Schema for " + channel + " not yet defined.");
+      }
+
+      var subscription;
 
       for (var i = 0; i < channels[channel].length; i++) {
         subscription = channels[channel][i];
-        subscription.fn.apply(subscription.context, args);
+        subscription.fn.call(subscription.context, arg);
         if (subscription.once) {
           Backbone.Mediator.unsubscribe(channel, subscription.fn, subscription.context);
           i--;
