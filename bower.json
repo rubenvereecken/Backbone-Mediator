@@ -1,6 +1,6 @@
 {
   "name": "validated-backbone-mediator",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/rubenvereecken/Validated-Backbone-Mediator",
   "authors": [
     "Ruben Vereecken <rubenvereecken@gmail.com>"
@@ -22,13 +22,13 @@
     "bower_components",
     "test",
     "tests",
-    ".gitignore"
+    ".gitignore",
+    "libs"
   ],
   "dependencies": {
-    "Backbone": "backbone",
-    "jQuery": "jquery",
-    "RequireJS": "require",
-    "tv4": "tv4",
-    "Underscore": "underscore"
+    "backbone": "~1.1.0",
+    "requirejs": "~2.1.11",
+    "tv4": "~1.0.15",
+    "jquery": "~2.0.3"
   }
 }
