@@ -50,7 +50,8 @@
     unvalidatedChannels: [],
 
     addChannelSchema: function (channel, schema) {
-      this.channelSchemas[channel] = schema;
+      if (schema && Object.keys(schema).length)
+        this.channelSchemas[channel] = schema;
     },
 
     addDefSchema: function (schema) {
@@ -58,8 +59,10 @@
     },
 
     addChannelSchemas: function (schemas) {
-      for (var key in schemas) {
-        this.channelSchemas[key] = schemas[key];
+      for (var channel in schemas) {
+        var schema = schemas[channel];
+        if (schema && Object.keys(schema).length)
+          this.channelSchemas[channel] = schema;
       }
     },
 
