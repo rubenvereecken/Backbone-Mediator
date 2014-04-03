@@ -13,7 +13,7 @@
  * @requires Backbone
  * @requires tv4
  */
-(function(factory){
+(function (factory) {
   'use strict';
 
   if (typeof define === 'function' && define.amd) {
@@ -22,7 +22,7 @@
     factory(_, Backbone);
   }
 
-})(function (_, Backbone){
+})(function (_, Backbone) {
   'use strict';
 
   /**
@@ -31,9 +31,9 @@
   var channels = {},
     Subscriber,
     /** @borrows Backbone.View#delegateEvents */
-      delegateEvents = Backbone.View.prototype.delegateEvents,
+    delegateEvents = Backbone.View.prototype.delegateEvents,
     /** @borrows Backbone.View#delegateEvents */
-      undelegateEvents = Backbone.View.prototype.undelegateEvents;
+    undelegateEvents = Backbone.View.prototype.undelegateEvents;
 
   /**
    * @class
@@ -47,21 +47,23 @@
 
     channelSchemas: {},
 
-    addChannelSchema: function(channel, schema) {
+    unvalidatedChannels: [],
+
+    addChannelSchema: function (channel, schema) {
       this.channelSchemas[channel] = schema;
     },
 
-    addDefSchema: function(schema) {
+    addDefSchema: function (schema) {
       this.tv4.addSchema(schema);
     },
 
-    addChannelSchemas: function(schemas) {
+    addChannelSchemas: function (schemas) {
       for (var key in schemas) {
         this.channelSchemas[key] = schemas[key];
       }
     },
 
-    addDefSchemas: function(schemas) {
+    addDefSchemas: function (schemas) {
       for (var key in schemas) {
         this.tv4.addSchema(schemas[key]);
       }
@@ -70,11 +72,11 @@
     /**
      * Sets up the tv4 validator.
      */
-    setUpValidator: function() {
+    setUpValidator: function () {
       this.tv4 = window['tv4'].freshApi();
     },
 
-    setValidationEnabled: function(enabled) {
+    setValidationEnabled: function (enabled) {
       this.validationEnabled = enabled;
     },
 
@@ -83,8 +85,12 @@
      *
      * @param channel
      */
-    subscribe: function(channel, subscription, context, once) {
+    subscribe: function (channel, subscription, context, once) {
       if (!channels[channel]) channels[channel] = [];
+      if (!(channel in this.defSchemas) && !_.contains(this.unvalidatedChannels, channel)) {
+        this.unvalidatedChannels.push(channel);
+        console.warn("Missing schema for channel '" + channel + "'.");
+      }
       channels[channel].push({fn: subscription, context: context || this, once: once});
     },
 
@@ -94,12 +100,10 @@
      * @param channel
      * @params N Extra parametter to pass to handler
      */
-    publish: function(channel, arg) {
+    publish: function (channel, arg) {
       if (!channels[channel]) return;
 
       if (channel in this.channelSchemas && this.validationEnabled) {
-        if (!this.tv4) this.setUpValidator();
-
         var valid = this.tv4.validate(arg, this.channelSchemas[channel]);
         if (!valid) {
           console.error("Dropping published object because of validation error.");
@@ -134,7 +138,7 @@
      * @param context
      */
 
-    unsubscribe: function(channel, fn, context){
+    unsubscribe: function (channel, fn, context) {
       if (!channels[channel]) return;
 
       var subscription;
@@ -174,7 +178,7 @@
     /**
      * Extend delegateEvents() to set subscriptions
      */
-    delegateEvents: function(){
+    delegateEvents: function () {
       delegateEvents.apply(this, arguments);
       this.setSubscriptions();
     },
@@ -182,7 +186,7 @@
     /**
      * Extend undelegateEvents() to unset subscriptions
      */
-    undelegateEvents: function(){
+    undelegateEvents: function () {
       undelegateEvents.apply(this, arguments);
       this.unsetSubscriptions();
     },
@@ -195,14 +199,14 @@
      * @param {Object} [subscriptions] An optional hash of subscription to add
      */
 
-    setSubscriptions: function(subscriptions){
+    setSubscriptions: function (subscriptions) {
       if (subscriptions) _.extend(this.subscriptions || {}, subscriptions);
       subscriptions = subscriptions || this.subscriptions;
       if (!subscriptions || _.isEmpty(subscriptions)) return;
       // Just to be sure we don't set duplicate
       this.unsetSubscriptions(subscriptions);
 
-      _.each(subscriptions, function(subscription, channel){
+      _.each(subscriptions, function (subscription, channel) {
         var once;
         if (subscription.$once) {
           subscription = subscription.$once;
@@ -219,10 +223,10 @@
      * Unsubscribe to each subscription
      * @param {Object} [subscriptions] An optional hash of subscription to remove
      */
-    unsetSubscriptions: function(subscriptions){
+    unsetSubscriptions: function (subscriptions) {
       subscriptions = subscriptions || this.subscriptions;
       if (!subscriptions || _.isEmpty(subscriptions)) return;
-      _.each(subscriptions, function(subscription, channel){
+      _.each(subscriptions, function (subscription, channel) {
         if (_.isString(subscription)) {
           subscription = this[subscription];
         }
