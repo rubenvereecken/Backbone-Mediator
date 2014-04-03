@@ -106,15 +106,10 @@
       if (channel in this.channelSchemas && this.validationEnabled) {
         var valid = this.tv4.validate(arg, this.channelSchemas[channel]);
         if (!valid) {
-          console.error("Dropping published object because of validation error.");
-          console.error(arg);
-          console.error(this.tv4.error);
+          console.error("Dropping publication because of validation error:", this.tv4.error);
           return;
         } else if (this.tv4.missing.length) {
           console.warn("Missing schema reference to " + this.tv4.missing[0]);
-        } else {
-          console.debug("Validation successful");
-          console.debug(arg);
         }
       }
 
