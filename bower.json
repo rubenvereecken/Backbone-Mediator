@@ -1,0 +1,34 @@
+{
+  "name": "validated-backbone-mediator",
+  "version": "0.0.0",
+  "homepage": "https://github.com/rubenvereecken/Validated-Backbone-Mediator",
+  "authors": [
+    "Ruben Vereecken <rubenvereecken@gmail.com>"
+  ],
+  "description": "Mediator for publishing Backbone events subject to JSON validation",
+  "main": "backbone-mediator.js",
+  "keywords": [
+    "backbone",
+    "mediator",
+    "validation",
+    "events",
+    "json",
+    "schema"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    ".gitignore"
+  ],
+  "dependencies": {
+    "Backbone": "backbone",
+    "jQuery": "jquery",
+    "RequireJS": "require",
+    "tv4": "tv4",
+    "Underscore": "underscore"
+  }
+}
