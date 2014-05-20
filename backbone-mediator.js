@@ -104,8 +104,6 @@
      * @params N Extra parametter to pass to handler
      */
     publish: function (channel, arg) {
-      if (!channels[channel]) return;
-
       if (channel in this.defSchemas) {
         if (this.validationEnabled) {
           var valid = this.tv4.validate(arg, this.channelSchemas[channel]);
@@ -120,6 +118,8 @@
         this.unvalidatedChannels.push(channel);
         console.warn("Missing schema for channel '" + channel + "'.");
       }
+
+      if (!channels[channel]) return;
 
       var subscription;
 
