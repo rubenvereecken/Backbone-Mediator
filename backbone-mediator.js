@@ -90,7 +90,7 @@
      */
     subscribe: function (channel, subscription, context, once) {
       if (!channels[channel]) channels[channel] = [];
-      if (!(channel in this.channelSchemas) && !_.contains(this.unvalidatedChannels, channel)) {
+      if (this.validationEnabled && !(channel in this.channelSchemas) && !_.contains(this.unvalidatedChannels, channel)) {
         this.unvalidatedChannels.push(channel);
         console.warn("Missing schema for channel '" + channel + "'.");
       }
@@ -116,7 +116,7 @@
             console.warn("Missing schema reference to " + this.tv4.missing[0]);
           }
         }
-      } else if (!_.contains(this.unvalidatedChannels, channel)) {
+      } else if (this.validationEnabled && !_.contains(this.unvalidatedChannels, channel)) {
         this.unvalidatedChannels.push(channel);
         console.warn("Missing schema for channel '" + channel + "'.");
       }
