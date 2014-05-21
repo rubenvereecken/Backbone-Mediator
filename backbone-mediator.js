@@ -61,7 +61,7 @@
     addChannelSchemas: function (schemas) {
       for (var channel in schemas) {
         var schema = schemas[channel];
-        if (schema && Object.keys(schema).length)
+        if (schema)
           this.channelSchemas[channel] = schema;
       }
     },
@@ -90,7 +90,7 @@
      */
     subscribe: function (channel, subscription, context, once) {
       if (!channels[channel]) channels[channel] = [];
-      if (!(channel in this.defSchemas) && !_.contains(this.unvalidatedChannels, channel)) {
+      if (!(channel in this.channelSchemas) && !_.contains(this.unvalidatedChannels, channel)) {
         this.unvalidatedChannels.push(channel);
         console.warn("Missing schema for channel '" + channel + "'.");
       }
@@ -106,7 +106,7 @@
     publish: function (channel, arg) {
       if (!channels[channel]) return;
 
-      if (channel in this.defSchemas) {
+      if (channel in this.channelSchemas) {
         if (this.validationEnabled) {
           var valid = this.tv4.validate(arg, this.channelSchemas[channel]);
           if (!valid) {
