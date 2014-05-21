@@ -104,13 +104,8 @@
      * @params N Extra parametter to pass to handler
      */
     publish: function (channel, arg) {
-<<<<<<< HEAD
-      if (!channels[channel]) return;
 
       if (channel in this.channelSchemas) {
-=======
-      if (channel in this.defSchemas) {
->>>>>>> 603211b42ef1a89e26ec0fde8b34588ca1b7844e
         if (this.validationEnabled) {
           var valid = this.tv4.validate(arg, this.channelSchemas[channel]);
           if (!valid) {
