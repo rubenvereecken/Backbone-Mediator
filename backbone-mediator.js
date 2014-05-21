@@ -39,16 +39,15 @@
    * @class
    */
   Backbone.Mediator = {
-    tv4: window['tv4'].freshApi(),
 
-    validationEnabled: true,
-
-    defSchemas: {},
-
-    channelSchemas: {},
-
-    unvalidatedChannels: [],
-
+    init: function () {
+      this.setUpValidator();
+      this.validationEnabled = true;
+      this.channelSchemas = {};
+      this.unvalidatedChannels = [];
+      channels = {};
+    },
+    
     addChannelSchema: function (channel, schema) {
       if (schema && Object.keys(schema).length)
         this.channelSchemas[channel] = schema;
@@ -259,6 +258,8 @@
      */
     sub: Backbone.Mediator.subscribe
   });
+  
+  Backbone.Mediator.init();
 
   return Backbone;
 
