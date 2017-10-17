@@ -122,13 +122,13 @@
       if (!channels[channel]) return;
 
       var subscription;
+      var subscriptions = channels[channel].slice();
 
-      for (var i = 0; i < channels[channel].length; i++) {
-        subscription = channels[channel][i];
+      for (var i = 0; i < subscriptions.length; i++) {
+        subscription = subscriptions[i];
         subscription.fn.call(subscription.context, arg);
         if (subscription.once) {
           Backbone.Mediator.unsubscribe(channel, subscription.fn, subscription.context);
-          i--;
         }
       }
     },
